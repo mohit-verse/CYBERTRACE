@@ -16,21 +16,21 @@ export default function Home() {
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
       {/* Hero Section */}
       <section className="text-center max-w-3xl mx-auto space-y-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-muted text-muted-foreground animate-in fade-in slide-in-from-bottom-2 duration-500">
           <span className="w-2 h-2 rounded-full bg-emerald-500" />
           Forensic-Grade Digital Investigation Platform
         </div>
 
-        <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight">
+        <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100 fill-mode-both">
           Evidence First.<br />
           Intelligence Second.
         </h1>
         
-        <p className="text-lg text-muted-foreground leading-relaxed">
+        <p className="text-lg text-muted-foreground leading-relaxed animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 fill-mode-both">
           Ingest fragmented digital evidence, preserve its integrity, extract structured information, correlate entities, calculate explainable risk, and generate forensic-grade investigation reports.
         </p>
 
-        <div className="flex items-center justify-center gap-4 pt-4">
+        <div className="flex items-center justify-center gap-4 pt-4 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 fill-mode-both">
           <Button size="lg" asChild>
             <Link href="/cases">
               Open Investigation Console
@@ -38,30 +38,30 @@ export default function Home() {
             </Link>
           </Button>
           <Button size="lg" variant="outline" asChild>
-            <Link href="https://github.com/rohit/cybertrace" target="_blank">
+            <a href="https://github.com/mohit-verse/CYBERTRACE/tree/main/docs" target="_blank" rel="noopener noreferrer">
               Documentation
-            </Link>
+            </a>
           </Button>
         </div>
       </section>
 
       {/* Feature Grid */}
       <section className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-5xl mt-24">
-        <div className="p-6 rounded-xl border bg-card text-card-foreground">
+        <div className="p-6 rounded-xl border bg-card text-card-foreground animate-in fade-in slide-in-from-bottom-8 duration-700 delay-500 fill-mode-both">
           <ShieldAlert className="w-8 h-8 text-primary mb-4" />
           <h3 className="text-lg font-semibold mb-2">Cryptographic Custody</h3>
           <p className="text-sm text-muted-foreground">
             Original evidence is never modified. SHA-256 validation guarantees file integrity throughout the entire parsing pipeline.
           </p>
         </div>
-        <div className="p-6 rounded-xl border bg-card text-card-foreground">
+        <div className="p-6 rounded-xl border bg-card text-card-foreground animate-in fade-in slide-in-from-bottom-8 duration-700 delay-700 fill-mode-both">
           <Network className="w-8 h-8 text-primary mb-4" />
           <h3 className="text-lg font-semibold mb-2">Deterministic Correlation</h3>
           <p className="text-sm text-muted-foreground">
             Connect multi-hop mule networks using hard evidence rules, extracting IPDR, CDR, and Bank statements automatically.
           </p>
         </div>
-        <div className="p-6 rounded-xl border bg-card text-card-foreground">
+        <div className="p-6 rounded-xl border bg-card text-card-foreground animate-in fade-in slide-in-from-bottom-8 duration-700 delay-1000 fill-mode-both">
           <FileText className="w-8 h-8 text-primary mb-4" />
           <h3 className="text-lg font-semibold mb-2">Grounded AI Analysis</h3>
           <p className="text-sm text-muted-foreground">

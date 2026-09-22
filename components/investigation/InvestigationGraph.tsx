@@ -114,6 +114,15 @@ const stylesheet = [
   }
 ];
 
+const GRAPH_LAYOUT = {
+  name: 'cose',
+  directed: true,
+  animate: false,
+  padding: 150,
+  nodeRepulsion: () => 8000,
+  idealEdgeLength: () => 120
+};
+
 export default function InvestigationGraph({ caseId, transactionPathOnly = false }: { caseId: string, transactionPathOnly?: boolean }) {
   const [elements, setElements] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -218,8 +227,11 @@ export default function InvestigationGraph({ caseId, transactionPathOnly = false
           elements={elements}
           style={{ width: '100%', height: '100%' }}
           stylesheet={stylesheet as any}
-          layout={{ name: 'cose', directed: true, padding: 50, nodeRepulsion: () => 8000, idealEdgeLength: () => 120 } as any}
+          layout={GRAPH_LAYOUT as any}
           cy={(cy) => {
+            if ((cy as any)._eventsInitialized) return;
+            (cy as any)._eventsInitialized = true;
+            
             cy.on('tap', 'node', (evt) => {
               setSelectedNode(evt.target.data());
               setSelectedEdge(null);
@@ -236,22 +248,10 @@ export default function InvestigationGraph({ caseId, transactionPathOnly = false
             });
           }}
         />
-        {/* Legend */}
-        <div className="absolute bottom-4 left-4 bg-[#0a0e1a]/90 backdrop-blur-sm border border-[#2a2f45] rounded-lg p-3 text-xs">
-          <div className="text-slate-400 font-semibold mb-2">Legend</div>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-emerald-500" />Phone</div>
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded bg-amber-500" />Device</div>
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-violet-500" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }} />Account</div>
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-pink-500" style={{ clipPath: 'polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)' }} />UPI</div>
-            <div className="flex items-center gap-2"><div className="w-3 h-3 bg-orange-500" style={{ transform: 'rotate(45deg)' }} />IP/MAC</div>
-            <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-cyan-500" />Email</div>
-          </div>
-        </div>
       </div>
 
       {/* Details Panel */}
-      <div className="w-full md:w-80 bg-[#111827] border-l border-[#2a2f45] p-5 overflow-y-auto">
+      <div className="w-full md:w-64 bg-[#111827] border-l border-[#2a2f45] p-5 overflow-y-auto">
         <h3 className="font-semibold text-slate-200 mb-4 flex items-center gap-2">
           <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
           Details

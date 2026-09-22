@@ -27,7 +27,7 @@ export default async function CasesPage() {
   const totalEvidence = cases.reduce((acc, c) => acc + c.evidenceFiles.length, 0);
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-6">
+    <div className="max-w-[1200px] mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Active Investigations</h1>

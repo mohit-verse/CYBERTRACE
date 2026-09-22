@@ -15,7 +15,9 @@ export function Topbar() {
     <header className="h-16 border-b bg-background flex items-center justify-between px-8 sticky top-0 z-40">
       <div className="flex-1 flex items-center gap-4">
         <div className="text-sm font-medium text-muted-foreground flex items-center gap-2 tracking-wide">
-          <Home className="w-4 h-4" />
+          <Link href="/" className="hover:text-foreground transition-colors flex items-center justify-center">
+            <Home className="w-4 h-4" />
+          </Link>
           
           {segments.map((seg, idx) => {
             const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(seg);

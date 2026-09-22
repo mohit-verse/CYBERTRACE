@@ -33,7 +33,7 @@ export default async function CaseDashboard({ params }: { params: { caseId: stri
   const highFindings = caseData.findings.filter(f => f.severity === 'HIGH').length;
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-8">
+    <div className="max-w-[1200px] mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
       
       {/* Header */}
       <div className="flex items-start justify-between">
