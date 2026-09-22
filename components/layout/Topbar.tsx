@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Search, ChevronRight, Home } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -16,14 +17,23 @@ export function Topbar() {
         <div className="text-sm font-medium text-muted-foreground flex items-center gap-2 tracking-wide">
           <Home className="w-4 h-4" />
           
-          {segments.map((seg, idx) => (
-            <div key={idx} className="flex items-center gap-2">
-              <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
-              <span className={idx === segments.length - 1 ? 'text-foreground' : 'text-muted-foreground'}>
-                {seg === 'cases' ? 'Cases' : seg}
-              </span>
-            </div>
-          ))}
+          {segments.map((seg, idx) => {
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(seg);
+            const displaySeg = isUUID ? seg.substring(0, 8) : (seg === 'cases' ? 'Cases' : seg);
+            const href = '/' + segments.slice(0, idx + 1).join('/');
+            
+            return (
+              <div key={idx} className="flex items-center gap-2">
+                <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
+                <Link 
+                  href={href}
+                  className={`hover:underline ${idx === segments.length - 1 ? 'text-foreground' : 'text-muted-foreground'}`}
+                >
+                  {displaySeg}
+                </Link>
+              </div>
+            );
+          })}
           {segments.length === 0 && (
             <div className="flex items-center gap-2">
               <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
