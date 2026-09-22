@@ -7,8 +7,23 @@ import React, { useEffect, useState } from 'react';
 import CytoscapeComponent from 'react-cytoscapejs';
 import cytoscape from 'cytoscape';
 
+const encodeSVG = (svgStr: string) => {
+  const colored = svgStr.replace(/currentColor/g, '#ffffff');
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(colored);
+};
+
+const ICONS = {
+  PHONE: encodeSVG('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></svg>'),
+  DEVICE: encodeSVG('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="16" x="4" y="4" rx="2" ry="2"/><rect width="6" height="6" x="9" y="9" rx="1" ry="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>'),
+  BANK: encodeSVG('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>'),
+  UPI: encodeSVG('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>'),
+  NETWORK: encodeSVG('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>'),
+  EMAIL: encodeSVG('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>'),
+  DEFAULT: encodeSVG('<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>')
+};
+
 // Dark-themed Cytoscape stylesheet
-const stylesheet = [
+const stylesheet: cytoscape.Stylesheet[] = [
   {
     selector: 'node',
     style: {
@@ -17,18 +32,22 @@ const stylesheet = [
       'color': '#e2e8f0',
       'text-valign': 'bottom',
       'text-halign': 'center',
-      'font-size': '9px',
+      'font-size': '10px',
       'font-weight': 'bold',
-      'width': 50,
-      'height': 50,
+      'width': 44,
+      'height': 44,
+      'shape': 'ellipse',
+      'background-image': ICONS.DEFAULT,
+      'background-width': '50%',
+      'background-height': '50%',
       'text-wrap': 'wrap',
-      'text-max-width': '70px',
+      'text-max-width': '90px',
       'text-margin-y': 8,
-      'border-width': 2,
+      'border-width': 3,
       'border-color': '#1e293b',
       'text-background-opacity': 0.85,
       'text-background-color': '#0a0e1a',
-      'text-background-padding': '3px',
+      'text-background-padding': '4px',
       'text-background-shape': 'roundrectangle',
       'overlay-padding': 6
     }
@@ -42,39 +61,39 @@ const stylesheet = [
       'target-arrow-color': '#475569',
       'target-arrow-shape': 'triangle',
       'curve-style': 'bezier',
-      'font-size': '7px',
-      'color': '#64748b',
+      'font-size': '8px',
+      'color': '#94a3b8',
       'text-background-opacity': 0.9,
       'text-background-color': '#0a0e1a',
-      'text-background-padding': '2px',
+      'text-background-padding': '3px',
       'text-background-shape': 'roundrectangle',
-      'line-opacity': 0.7
+      'line-opacity': 0.8
     }
   },
   // Entity specific styles
   {
     selector: 'node[type="PHONE"]',
-    style: { 'background-color': '#10b981', 'shape': 'ellipse' }
+    style: { 'background-color': '#10b981', 'background-image': ICONS.PHONE }
   },
   {
     selector: 'node[type="IMEI"], node[type="IMSI"], node[type="DEVICE"]',
-    style: { 'background-color': '#f59e0b', 'shape': 'rectangle' }
+    style: { 'background-color': '#f59e0b', 'background-image': ICONS.DEVICE }
   },
   {
     selector: 'node[type="BANK_ACCOUNT"]',
-    style: { 'background-color': '#8b5cf6', 'shape': 'hexagon' }
+    style: { 'background-color': '#8b5cf6', 'background-image': ICONS.BANK }
   },
   {
     selector: 'node[type="UPI"]',
-    style: { 'background-color': '#ec4899', 'shape': 'hexagon' }
+    style: { 'background-color': '#ec4899', 'background-image': ICONS.UPI }
   },
   {
     selector: 'node[type="IP"], node[type="MAC"]',
-    style: { 'background-color': '#f97316', 'shape': 'diamond' }
+    style: { 'background-color': '#f97316', 'background-image': ICONS.NETWORK }
   },
   {
     selector: 'node[type="EMAIL"]',
-    style: { 'background-color': '#06b6d4', 'shape': 'ellipse' }
+    style: { 'background-color': '#06b6d4', 'background-image': ICONS.EMAIL }
   },
   // Risk styling overrides
   {
