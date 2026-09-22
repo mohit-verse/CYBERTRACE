@@ -23,7 +23,7 @@ const ICONS = {
 };
 
 // Dark-themed Cytoscape stylesheet
-const stylesheet: cytoscape.Stylesheet[] = [
+const stylesheet = [
   {
     selector: 'node',
     style: {
