@@ -1,0 +1,4 @@
+timestamp,transaction_id,source_upi,destination_upi,amount,currency
+2026-09-20T10:00:00,UPI001,victim001@upi,mulea001@upi,25000,INR
+2026-09-20T10:03:00,UPI002,mulea001@upi,muleb001@upi,24000,INR
+2026-09-20T10:07:00,UPI003,muleb001@upi,cashout001@upi,23500,INR

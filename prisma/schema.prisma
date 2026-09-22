@@ -1,0 +1,257 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum CaseStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+enum ArtifactType {
+  CDR
+  IPDR
+  BANK_TRANSACTION
+  UPI_TRANSACTION
+  EMAIL
+  ANDROID_LOG
+  OTHER
+}
+
+enum ProcessingStatus {
+  UPLOADED
+  HASHED
+  PROCESSING
+  PROCESSED
+  FAILED
+}
+
+enum IntegrityStatus {
+  PENDING
+  VERIFIED
+  MISMATCH
+  ERROR
+}
+
+enum EntityType {
+  PHONE
+  IMEI
+  IMSI
+  DEVICE
+  IP
+  MAC
+  UPI
+  BANK_ACCOUNT
+  TRANSACTION
+  EMAIL
+  LOCATION
+}
+
+enum RelationshipType {
+  USES
+  HAS
+  LINKED_TO
+  TRANSFERRED_TO
+  FROM
+  TO
+  CALLED
+  CONNECTED_FROM
+  ASSOCIATED_WITH
+}
+
+enum Confidence {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model Case {
+  id              String                 @id @default(uuid())
+  caseNumber      String                 @unique
+  title           String
+  description     String?
+  status          CaseStatus             @default(ACTIVE)
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+  evidenceFiles   EvidenceFile[]
+  entities        Entity[]
+  relationships   Relationship[]
+  transactions    Transaction[]
+  riskAssessments RiskAssessment[]
+  timelineEvents  TimelineEvent[]
+  findings        InvestigationFinding[]
+  reports         Report[]
+}
+
+model EvidenceFile {
+  id               String           @id @default(uuid())
+  caseId           String
+  case             Case             @relation(fields: [caseId], references: [id])
+  originalFilename String
+  storedFilename   String
+  mimeType         String?
+  fileExtension    String?
+  fileSize         Int?
+  sha256           String?
+  artifactType     ArtifactType
+  processingStatus ProcessingStatus @default(UPLOADED)
+  integrityStatus  IntegrityStatus  @default(PENDING)
+  storagePath      String?
+  uploadedAt       DateTime         @default(now())
+  processedAt      DateTime?
+  errorMessage     String?
+  records          EvidenceRecord[]
+}
+
+model EvidenceRecord {
+  id                   String                 @id @default(uuid())
+  evidenceFileId       String
+  evidenceFile         EvidenceFile           @relation(fields: [evidenceFileId], references: [id])
+  sourceRecordId       String?
+  recordType           String?
+  recordTimestamp      DateTime?
+  normalizedData       Json?
+  rawReference         String?
+  createdAt            DateTime               @default(now())
+  transactions         Transaction[]
+  relationshipEvidence RelationshipEvidence[]
+}
+
+model Entity {
+  id                  String           @id @default(uuid())
+  caseId              String
+  case                Case             @relation(fields: [caseId], references: [id])
+  type                EntityType
+  canonicalValue      String
+  displayValue        String?
+  metadata            Json?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  sourceRelationships Relationship[]   @relation("SourceEntity")
+  targetRelationships Relationship[]   @relation("TargetEntity")
+  sourceTransactions  Transaction[]    @relation("SourceAccount")
+  destTransactions    Transaction[]    @relation("DestAccount")
+  riskAssessments     RiskAssessment[]
+
+  @@unique([caseId, type, canonicalValue])
+}
+
+model Relationship {
+  id               String                 @id @default(uuid())
+  caseId           String
+  case             Case                   @relation(fields: [caseId], references: [id])
+  sourceEntityId   String
+  sourceEntity     Entity                 @relation("SourceEntity", fields: [sourceEntityId], references: [id])
+  targetEntityId   String
+  targetEntity     Entity                 @relation("TargetEntity", fields: [targetEntityId], references: [id])
+  relationshipType RelationshipType
+  confidence       Confidence
+  reason           String?
+  metadata         Json?
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  evidence         RelationshipEvidence[]
+}
+
+model RelationshipEvidence {
+  relationshipId   String
+  evidenceRecordId String
+  relationship     Relationship   @relation(fields: [relationshipId], references: [id])
+  evidenceRecord   EvidenceRecord @relation(fields: [evidenceRecordId], references: [id])
+
+  @@id([relationshipId, evidenceRecordId])
+}
+
+model Transaction {
+  id                         String          @id @default(uuid())
+  caseId                     String
+  case                       Case            @relation(fields: [caseId], references: [id])
+  sourceEvidenceRecordId     String?
+  sourceEvidenceRecord       EvidenceRecord? @relation(fields: [sourceEvidenceRecordId], references: [id])
+  transactionReference       String?
+  sourceAccountEntityId      String?
+  sourceAccountEntity        Entity?         @relation("SourceAccount", fields: [sourceAccountEntityId], references: [id])
+  destinationAccountEntityId String?
+  destinationAccountEntity   Entity?         @relation("DestAccount", fields: [destinationAccountEntityId], references: [id])
+  amount                     Float?
+  currency                   String?
+  transactionTimestamp       DateTime?
+  channel                    String?
+  description                String?
+  metadata                   Json?
+  createdAt                  DateTime        @default(now())
+}
+
+model RiskAssessment {
+  id           String       @id @default(uuid())
+  caseId       String
+  case         Case         @relation(fields: [caseId], references: [id])
+  entityId     String
+  entity       Entity       @relation(fields: [entityId], references: [id])
+  score        Int
+  severity     Severity
+  calculatedAt DateTime     @default(now())
+  modelVersion String?
+  factors      RiskFactor[]
+}
+
+model RiskFactor {
+  id                 String         @id @default(uuid())
+  riskAssessmentId   String
+  riskAssessment     RiskAssessment @relation(fields: [riskAssessmentId], references: [id])
+  factorType         String
+  weight             Int
+  description        String
+  evidenceReferences Json?
+}
+
+model TimelineEvent {
+  id                     String    @id @default(uuid())
+  caseId                 String
+  case                   Case      @relation(fields: [caseId], references: [id])
+  eventType              String
+  timestamp              DateTime
+  title                  String
+  description            String?
+  severity               Severity?
+  sourceEvidenceRecordId String?
+  primaryEntityId        String?
+  metadata               Json?
+  createdAt              DateTime  @default(now())
+}
+
+model InvestigationFinding {
+  id          String   @id @default(uuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id])
+  findingType String
+  severity    Severity
+  title       String
+  description String?
+  status      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Report {
+  id          String   @id @default(uuid())
+  caseId      String
+  case        Case     @relation(fields: [caseId], references: [id])
+  reportType  String
+  format      String
+  status      String
+  generatedAt DateTime @default(now())
+  filePath    String?
+  metadata    Json?
+}

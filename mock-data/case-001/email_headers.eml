@@ -1,0 +1,23 @@
+From: suspect@example.com
+To: victim001@example.com
+Subject: Urgent: Verify Your UPI Transaction
+Date: Sat, 20 Sep 2026 09:45:00 +0530
+Message-ID: <mock-msg-001@example.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: MockMailer/1.0
+Received: from mail.example.com (203.0.113.25) by mx.example.com
+DKIM-Signature: v=1; a=rsa-sha256; d=example.com; s=mock;
+Authentication-Results: mx.example.com; spf=fail smtp.mailfrom=suspect@example.com;
+
+Dear Customer,
+
+Your UPI transaction of Rs. 25,000 requires immediate verification.
+Click the link below to verify your account:
+
+http://example.com/verify?ref=MOCK001
+
+This is a time-sensitive matter. Please respond within 24 hours.
+
+Regards,
+UPI Support Team

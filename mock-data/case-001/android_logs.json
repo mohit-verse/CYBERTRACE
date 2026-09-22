@@ -1,0 +1,14 @@
+[
+  {
+    "timestamp": "2026-09-20T10:15:00",
+    "phone": "9876500002",
+    "imei": "356789012345671",
+    "event": "NETWORK_ACTIVITY"
+  },
+  {
+    "timestamp": "2026-09-20T10:16:00",
+    "phone": "9876500003",
+    "imei": "356789012345671",
+    "event": "NETWORK_ACTIVITY"
+  }
+]
