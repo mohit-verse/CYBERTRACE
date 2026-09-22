@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { contextBuilder, getAIProvider } from '@/lib/ai';
 
+export const maxDuration = 60; // 60 seconds max for Vercel
+
 export async function POST(req: NextRequest, { params }: { params: { caseId: string } }) {
   try {
     const { caseId } = params;

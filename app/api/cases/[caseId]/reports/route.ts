@@ -5,6 +5,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import { reportBuilder } from '@/lib/reports';
 
+export const maxDuration = 60; // 60 seconds max for Vercel
+
 export async function GET(req: NextRequest, { params }: { params: { caseId: string } }) {
   try {
     const { caseId } = params;
