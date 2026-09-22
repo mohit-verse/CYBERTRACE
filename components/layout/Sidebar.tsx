@@ -3,7 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
-import Link from 'next/link';
+import { Link } from 'next-view-transitions';
 import { usePathname } from 'next/navigation';
 import { Briefcase, FileText, Activity, Share2, Network, ShieldAlert, BarChart } from 'lucide-react';
 import { cn } from '@/lib/utils';
